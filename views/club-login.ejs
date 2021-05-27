@@ -18,8 +18,8 @@
         </div>
 
         <div class="show-password">
-        <input type="checkbox" id="password-checkbox" name="password-checkbox" value="invisible">
-        <label for="password-checkbox"> Show password</label><br>
+            <input type="checkbox" id="password-checkbox" name="password-checkbox" value="invisible">
+            <label for="password-checkbox"> Show password</label><br>
         </div>
 
         <button type="login" class="btn btn-outline-light btn-lg btn-block login-btn">Login</button>
@@ -29,5 +29,15 @@
             <div class="acc">Login as student? <a href="/student-login">Student Login</a></div>
         </div>
     </form>
+    
+    <script>
+        ("#password-checkbox").click(function() {
+            if((this).prop("checked") === true) {
+                ("#password").attr("type", "text");
+            } else {
+                ("#password").attr("type", "password");
+            }
+        });
+    </script>
 
 <%- include("partials/footer") %>

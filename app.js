@@ -167,31 +167,6 @@ app.post("/student-signup", (req, res) => {
     });
 });
 
-function isValid(regno) {
-    const allowedChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-
-    for(let i = 0; i<2; i++) {
-        let ch = regno.charAt(i);
-        if(!allowedChars.includes(ch)) {
-            return false;
-        }
-    }
-
-    for(let i = 2; i<5; i++) {
-        let ch = regno.charAt(i);
-        if(!(ch>='a' && ch<='z') && !(ch>='A' && ch<='Z')) {
-            return false;
-        }
-    }
-
-    for(let i = 5; i<9; i++) {
-        let ch = regno.charAt(i);
-        if(!allowedChars.includes(ch)) {
-            return false;
-        }
-    }
-    return true;
-}
 
 app.get("/club-signup", (req, res) => {
     if(loggedIn===true){
@@ -252,6 +227,32 @@ app.post("/club-signup", (req, res) => {
     });
 });
 
+
+function isValid(regno) {
+    const allowedChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    for(let i = 0; i<2; i++) {
+        let ch = regno.charAt(i);
+        if(!allowedChars.includes(ch)) {
+            return false;
+        }
+    }
+
+    for(let i = 2; i<5; i++) {
+        let ch = regno.charAt(i);
+        if(!(ch>='a' && ch<='z') && !(ch>='A' && ch<='Z')) {
+            return false;
+        }
+    }
+
+    for(let i = 5; i<9; i++) {
+        let ch = regno.charAt(i);
+        if(!allowedChars.includes(ch)) {
+            return false;
+        }
+    }
+    return true;
+}
 
 function isValids(phno) {
     const allowedChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
