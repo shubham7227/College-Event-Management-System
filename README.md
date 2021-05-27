@@ -1,8 +1,9 @@
 # uploadproj
 
 # to RUN
-npm intall dotenv
-npm install express
-npm install ejs
-npm install mysql
-npm install express-fileupload
+
+1. npm intall dotenv
+2. npm install express
+3. npm install ejs
+4. npm install mysql
+5. npm install express-fileupload
