@@ -1,0 +1,118 @@
+<%- include("partials/header2", {title: "Registered Events"}) %>
+
+<% if(failure) { %>
+    <div class="alert alert-danger" role="alert">
+        <%= msg %>
+    </div>
+<% } %>
+
+<body>
+    <header class="site-header">
+        <div class="header-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-10 col-lg-4">
+                        <h1 class="site-branding flex">
+                            <a href="/club-index">Event Manager</a>
+                        </h1>
+                    </div>
+
+                    <div class="col-2 col-lg-8">
+                        <nav class="all-header">
+                            <a class="boton" href="/club-profile">PROFILE</a>
+                            <a class="boton" href="/login">LOGOUT</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+<div class="event-reg-form">
+    <div class="main-content">
+        <div class="container">
+            <div class="entry-header">
+                <div class="entry-title">
+                    <h2>Add new event</h2>
+                    <h6 style="color: red;">* required</h5>
+                </div><!-- -->
+            </div><!-- -->
+        </div><!-- container -->
+    </div><!-- main-content -->
+
+
+    <div class="event-reg">
+        <form action="/register-event" method="post" encType="multipart/form-data">
+            <div class="form-group">
+              <label for="text-box">Event Name <a style="color: red;">*</a></label>
+              <input type="text" name="ename" class="form-control" id="ename" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="text-box">Venue<a style="color: red;">*</a></label>
+                <input type="text" name="venue" class="form-control" id="venue" autocomplete="off">
+              </div>
+              <div class="form-group">
+                  <div class="branch">
+                        <div class="branch1">
+                            <label for="text-box">Date<a style="color: red;">*</a></label>
+                            <input type="date" name="edate" class="form-control" id="edate" autocomplete="off">
+                        </div>
+
+                        <div class="branch1">
+                            <label for="text-box">Number of Participants</label>
+                            <input type="text" name="max_no_of_participant" class="form-control" id="text-box" autocomplete="off">
+                        </div>
+                    </div>
+              </div>
+
+              <div class="form-group">
+                    <div class="branch">
+                        <div class="branch1">
+                            <label for="text-box">Branch</label><br>
+
+                            <input type="checkbox" id="branch1" name="branch" value="BCE">
+                            <label for="branch1">Computer</label><br>
+                            
+                            <input type="checkbox" id="branch2" name="branch" value="BCL">
+                            <label for="branch2">Civil</label><br>
+
+                            <input type="checkbox" id="branch3" name="branch" value="BEE">
+                            <label for="branch3">Electrical</label><br>
+
+                            <input type="checkbox" id="branch4" name="branch" value="BME">
+                            <label for="branch4">Mechanical</label><br>
+
+                        </div>
+
+                        <div class="branch1">
+                            <label for="text-box">Year</label><br>
+                            <input type="checkbox" id="year1" name="year" value="20">
+                            <label for="year1">First</label><br>
+                            
+                            <input type="checkbox" id="year2" name="year" value="19">
+                            <label for="year2">Second</label><br>
+
+                            <input type="checkbox" id="year3" name="year" value="18">
+                            <label for="year3">Third</label><br>
+
+                            <input type="checkbox" id="year4" name="year" value="17">
+                            <label for="year4">Final</label><br>
+                        </div>
+                    </div>
+                </div>
+            <div class="form-group">
+                <label for="text-box">Event Poster<a style="color: red;">*</a></label>
+                <input type="file" name="poster" class="form-control" accept="image/*"/>
+            </div>
+
+            <div class="form-group">
+                <label for="big-text-box">Event Description<a style="color: red;">*</a></label>
+                <textarea class="form-control" name="remarks" id="remarks" rows="5" autocomplete="off"></textarea>
+            </div>
+            <button type="submit" id="register" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</div>
+
+<%- include("partials/footer2") %>
