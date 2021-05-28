@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="branch1">
-                            <label for="text-box">Number of Participants</label>
+                            <label for="text-box">Number of Participants<a style="color: red;">*</a></label>
                             <input type="text" name="max_no_of_participant" class="form-control" id="text-box" autocomplete="off">
                         </div>
                     </div>
@@ -69,7 +69,7 @@
               <div class="form-group">
                     <div class="branch">
                         <div class="branch1">
-                            <label for="text-box">Branch</label><br>
+                            <label for="text-box">Branch<a style="color: red;">*</a></label><br>
 
                             <input type="checkbox" id="branch1" name="branch" value="BCE">
                             <label for="branch1">Computer</label><br>
@@ -86,7 +86,7 @@
                         </div>
 
                         <div class="branch1">
-                            <label for="text-box">Year</label><br>
+                            <label for="text-box">Year<a style="color: red;">*</a></label><br>
                             <input type="checkbox" id="year1" name="year" value="20">
                             <label for="year1">First</label><br>
                             
@@ -111,6 +111,9 @@
                 <textarea class="form-control" name="remarks" id="remarks" rows="5" autocomplete="off"></textarea>
             </div>
             <button type="submit" id="register" class="btn btn-primary">Register</button>
+            <a href="/club-profile">
+                <div class="btn btn-primary">CANCEL</div>
+            </a>
         </form>
     </div>
 </div>

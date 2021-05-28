@@ -24,7 +24,8 @@ let email = "";
 let cname = "";
 let failure = false;
 let msg = "";
-let loggedIn = false;
+let studentloggedIn = false;
+let clubloggedIn = false;
 let eventValues = [];
 
 app.get("/", (req, res) => {
@@ -32,16 +33,17 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login",(req,res) =>{
-    loggedIn=false;
+    studentloggedIn=false;
+    clubloggedIn=false;
     res.render("login");
 });
 
 app.get("/student-login", (req, res) => {
-    if(loggedIn===true){
+    if(studentloggedIn===true){
         res.render("student-index");
     }
     else{
-        loggedIn=false;
+        studentloggedIn=false;
         res.render("student-login", {failure: failure, msg: msg});
         failure = false;
         msg = "";
@@ -56,7 +58,7 @@ app.post("/student-login", (req, res) => {
         if(!err) {
             if(foundUsers.length > 0) {
                 if(password === foundUsers[0].password) {
-                    loggedIn = true;
+                    studentloggedIn = true;
                     res.redirect("/index");
                 } else {
                     failure = true;
@@ -75,11 +77,11 @@ app.post("/student-login", (req, res) => {
 });
 
 app.get("/club-login", (req, res) => {
-    if(loggedIn===true){
+    if(clubloggedIn===true){
         res.render("club-profile");
     }
     else{
-        loggedIn=false;
+        clubloggedIn=false;
         res.render("club-login", {failure: failure, msg: msg});
         failure = false;
         msg = "";
@@ -94,7 +96,7 @@ app.post("/club-login", (req, res) => {
         if(!err) {
             if(foundUsers.length > 0) {
                 if(password === foundUsers[0].password) {
-                    loggedIn = true;
+                    clubloggedIn = true;
                     res.redirect("/club-profile");
                 } else {
                     failure = true;
@@ -113,11 +115,11 @@ app.post("/club-login", (req, res) => {
 });
 
 app.get("/student-signup", (req, res) => {
-    if(loggedIn===true){
+    if(clubloggedIn===true){
         res.render("student-index");
     }
     else{
-        loggedIn = false;
+        clubloggedIn = false;
         res.render("student-signup", {failure: failure, msg: msg});
         failure = false;
         msg = "";
@@ -169,11 +171,11 @@ app.post("/student-signup", (req, res) => {
 
 
 app.get("/club-signup", (req, res) => {
-    if(loggedIn===true){
+    if(clubloggedIn===true){
         res.render("student-index");
     }
     else{
-        loggedIn = false;
+        clubloggedIn = false;
         res.render("club-signup", {failure: failure, msg: msg});
         failure = false;
         msg = "";
@@ -271,8 +273,23 @@ function isValids(phno) {
     return true;
 }
 
+// CLUB SIDE PAGES ALL
+app.get("/club-profile", (req, res) => {
+    if(clubloggedIn) {
+        connection.query("SELECT * FROM club WHERE cname = ? ",[cname], (err, club) => {
+            if(!err) {
+                res.render("club-profile", {foundClub: club});
+            } else {
+                console.log(err);
+            }
+        });
+    } else {
+        res.render("login");
+    }
+});
+
 app.get("/register-event", (req, res) => {
-    if(loggedIn) {
+    if(clubloggedIn) {
         res.render("register-event", {failure: failure, msg: msg});
         failure=false;
     } else {
@@ -336,10 +353,10 @@ app.post("/register-event", (req, res) => {
 });
 
 app.get("/registered-event", (req, res) => {
-    if(loggedIn) {
-        connection.query("SELECT * FROM events WHERE cname = ? ",[cname], (err, events) => {
+    if(clubloggedIn) {
+        connection.query("SELECT ID,ename,poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE cname = ? AND DATE(edate) >= DATE(NOW()) ORDER BY edate",[cname], (err, events) => {
             if(!err) {
-                res.render("registered-events", {foundEvents: events});
+                res.render("registered-event", {foundEvents: events});
             } else {
                 console.log(err);
             }
@@ -349,11 +366,20 @@ app.get("/registered-event", (req, res) => {
     }
 });
 
-app.get("/club-profile", (req, res) => {
-    if(loggedIn) {
-        connection.query("SELECT * FROM club WHERE cname = ? ",[cname], (err, club) => {
+let eventid;
+
+app.post("/registered-event", (req,res)=>{
+    eventid = req.body.clicked;
+    res.redirect("specific-event");
+});
+
+app.get("/specific-event", (req, res) => {
+    if(clubloggedIn) {
+        connection.query("SELECT ename, venue, DATE_FORMAT(edate, '%Y-%m-%d') dat, max_no_of_participant, remarks, cname, poster FROM events WHERE ID = ?",[eventid], (err, events) => {
             if(!err) {
-                res.render("club-profile", {foundClub: club});
+                res.render("specific-event", {specEvent: events, failure: failure, msg: msg});
+                failure = false;
+                msg = "";
             } else {
                 console.log(err);
             }
@@ -362,10 +388,89 @@ app.get("/club-profile", (req, res) => {
         res.render("login");
     }
 });
+
+
+app.post("/specific-event", (req, res) => {
+    let key,i=0;
+    for(key in req.body){
+        eventValues[i++]=req.body[key];
+    }
+    let ename= eventValues[0];
+    let venue = eventValues[1];
+    let edate = eventValues[2];
+    let max_no_of_participant = eventValues[3];
+    let remarks = eventValues[4];
+
+    if(ename==="" || venue==="" || edate==="" || remarks===""){
+        failure=true;
+        msg = "Please fill all the required fields";
+        res.redirect("/specific-event");
+        return ;
+    }
+    if (!req.files || Object.keys(req.files).length === 0) {
+        connection.query("UPDATE events SET ename=?, venue=?, edate=?, max_no_of_participant=?, remarks=? WHERE ID=?", [ename, venue, edate, max_no_of_participant, remarks, eventid], (err, results) => {
+            if(!err) {
+                res.redirect("/registered-event");
+            } else {
+                console.log(err);
+            }
+        });
+    }else{
+        let file = req.files.poster;
+        file.mv('public/images/uploaded_image/'+file.name, function(err){
+            connection.query("UPDATE events SET ename=?, venue=?, edate=?, max_no_of_participant=?, remarks=?, poster=? WHERE ID=?", [ename, venue, edate, max_no_of_participant, remarks, file.name, eventid], (err, results) => {
+                if(!err) {
+                    res.redirect("/registered-event");
+                } else {
+                    console.log(err);
+                }
+            });
+        });
+    }
+});
+
+
+app.get("/past-events", (req, res) => {
+    if(clubloggedIn) {
+        connection.query("SELECT ID,ename,poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE cname = ? AND DATE(edate) < DATE(NOW()) ORDER BY edate",[cname], (err, events) => {
+            if(!err) {
+                res.render("past-events", {foundEvents: events});
+            } else {
+                console.log(err);
+            }
+        });
+    } else {
+        res.render("login");
+    }
+});
+
+
+app.post("/past-events", (req,res)=>{
+    eventid = req.body.clicked;
+    res.redirect("specific-event-view");
+});
+
+
+app.get("/specific-event-view", (req, res) => {
+    if(clubloggedIn) {
+        connection.query("SELECT ename, venue, DATE_FORMAT(edate, '%Y-%m-%d') dat, max_no_of_participant, remarks, cname, poster FROM events WHERE ID = ? ORDER BY edate",[eventid], (err, events) => {
+            if(!err) {
+                res.render("specific-event-view", {specEvent: events, failure: failure, msg: msg});
+                failure = false;
+                msg = "";
+            } else {
+                console.log(err);
+            }
+        });
+    } else {
+        res.render("login");
+    }
+});
+
 
 
 app.get("/edit-club-profile", (req, res) => {
-    if(loggedIn) {
+    if(clubloggedIn) {
         connection.query("SELECT * FROM club WHERE cname = ? ",[cname], (err, club) => {
             if(!err) {
                 res.render("edit-club-profile", {foundClub: club, failure: failure, msg: msg});

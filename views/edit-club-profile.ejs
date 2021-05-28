@@ -30,6 +30,7 @@
     </header>    
 
 <div class="container emp-profile">
+    
     <% foundClub.forEach(club => { %>
             <form action="/edit-club-profile" method="post" encType="multipart/form-data">
                 <div class="row">
@@ -47,10 +48,10 @@
                                         <%= club.cname %>
                                     </h2>
                                     <div class="form-group">
-                                        <input name="email" type="email" placeholder="<%= club.email %>" id="cname" autocomplete="off">
+                                        <input name="email" type="email" value="<%= club.email %>" id="cname" autocomplete="off">
                                     </div>
                                     <div class="form-group">
-                                        <input name="phno" type="text" placeholder="<%= club.phno %>" id="cname" autocomplete="off">
+                                        <input name="phno" type="text" value="<%= club.phno %>" id="cname" autocomplete="off">
                                     </div>
                                     <div class="form-group">
                                         <input name="password" type="password" placeholder="Password" id="password">

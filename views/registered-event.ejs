@@ -1,0 +1,70 @@
+<%- include("partials/header2", {title: "Registered Event"}) %>
+
+<body>
+    <header class="site-header">
+        <div class="header-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-10 col-lg-4">
+                        <h1 class="site-branding flex">
+                            <a href="/club-index">Event Manager</a>
+                        </h1>
+                    </div>
+
+                    <div class="col-2 col-lg-8">
+                        <nav class="all-header">
+                            <a class="boton" href="/club-profile">PROFILE</a>
+                            <a class="boton" href="/login">LOGOUT</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>    
+
+<div class="container emp-profile">
+    <div class="reghead">
+    <div class="row">
+        
+                    <div class="col-md-9">
+                        <h2>All Registered Events</h2>
+                    </div>
+                    <div class="col-md-3">
+					    <a href="/past-events">
+						    <div class="btn btn-primary">PAST EVENTS</div>
+					    </a>
+                    </div>
+        </div>
+    </div>
+	<div class="row">
+			<% foundEvents.forEach(events => { %>
+                <div class="col-md-4">
+					<form action="/registered-event" method="post">
+                        <div class="poster-img">
+                            <img src="images/uploaded_image/<%= events.poster %>" alt="logo"/>
+                        </div>
+                    <div class="poster-head">
+						<button type="submit" class="glow-on-hover" id="clk" name="clicked" value="<%= events.ID %>" ><div class="row">
+                                <div class="col-md-3">
+                                <div class="event-date"><%= events.month %><br>
+                                <%= events.day %></div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="event-date"><%= events.ename %></div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+                    <a href="/club-profile">
+                        <div class="btn btn-primary">BACK</div>
+                    </a>
+					</form> 
+                </div>	
+        	<% }); %> 
+	</div> 
+	
+  
+</div>
+
+<%- include("partials/footer2") %>
