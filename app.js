@@ -308,7 +308,7 @@ app.post("/register-event", (req, res) => {
     }
     let file = req.files.poster;
 
-    file.mv('C:/Users/Sulav/Desktop/ourproj/public/images/uploaded_image/'+file.name, function(err){
+    file.mv('public/images/uploaded_image/'+file.name, function(err){
         connection.query("INSERT INTO events(ename, venue, edate, max_no_of_participant, remarks, cname, poster) VALUES(?)", [[ename, venue, edate, max_no_of_participant, remarks,cname, file.name]], (err, results) => {
             if(!err) {
                     let sql = "INSERT INTO year(ID,years) VALUES ?";
