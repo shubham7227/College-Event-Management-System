@@ -6,6 +6,7 @@ const mysql = require("mysql");
 const async = require("async");
 const app = express();
 const fileUpload = require('express-fileupload');
+const { json } = require("express");
 
 app.use(fileUpload());
 app.set("view engine", "ejs");
@@ -33,6 +34,19 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login",(req,res) =>{
+    if(studentloggedIn===true){
+        res.redirect("student-index");
+    }else if(clubloggedIn===true){
+        res.redirect("club-profile");
+    }else{
+        studentloggedIn=false;
+        clubloggedIn=false;
+        res.render("login");
+    }
+});
+
+
+app.get("/logout",(req,res) =>{
     studentloggedIn=false;
     clubloggedIn=false;
     res.render("login");
@@ -59,7 +73,7 @@ app.post("/student-login", (req, res) => {
             if(foundUsers.length > 0) {
                 if(password === foundUsers[0].password) {
                     studentloggedIn = true;
-                    res.redirect("/index");
+                    res.redirect("/student-index");
                 } else {
                     failure = true;
                     msg = "Incorrect credentials";
@@ -78,7 +92,7 @@ app.post("/student-login", (req, res) => {
 
 app.get("/club-login", (req, res) => {
     if(clubloggedIn===true){
-        res.render("club-profile");
+        res.redirect("club-profile");
     }
     else{
         clubloggedIn=false;
@@ -168,6 +182,7 @@ app.post("/student-signup", (req, res) => {
         }
     });
 });
+
 
 
 app.get("/club-signup", (req, res) => {
@@ -273,6 +288,72 @@ function isValids(phno) {
     return true;
 }
 
+
+app.get("/student-index", (req, res) => {
+    if(studentloggedIn) {
+       var allEvents=[];
+        connection.query("SELECT * FROM student WHERE email=?", [email], (error, loggedin_std) => {
+            if (!error) {
+                async.forEachOf(loggedin_std, (thisstudent, k) => {
+                    console.log("second");
+                    connection.query("SELECT ID FROM events WHERE DATE(edate) >= DATE(NOW()) ORDER BY edate", (e, events) => {
+                        if (!e) {
+                            console.log("third");
+                            async.forEachOf(events, (thisevent, i) => {
+                                connection.query("SELECT * FROM year WHERE ID=?", [thisevent.ID], (er, year) => {
+                                    if (!er) {
+                                        console.log("fourth");
+                                        async.forEachOf(year, (thisyear, j) => {
+                                            if (thisyear.years === thisstudent.syear) {
+                                                connection.query("SELECT * FROM branch WHERE ID=?", [thisyear.ID], (erroo, branch) => {
+                                                    if (!erroo) {
+                                                        console.log("fifth");
+                                                        async.forEachOf(branch, (thisbranch, l) => {
+                                                            if (thisbranch.branches === thisstudent.sbranch) {
+                                                                connection.query("SELECT ID, ename, poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE ID=?", [thisbranch.ID], (erro, foundevent) => {
+                                                                    if (!erro) {
+                                                                        console.log("fifth");
+                                                                        let temp = {
+                                                                            ID: foundevent[0].ID,
+                                                                            ename: foundevent[0].ename,
+                                                                            poster: foundevent[0].poster,
+                                                                            day: foundevent[0].day,
+                                                                            month: foundevent[0].month
+                                                                        };
+                                                                        allEvents.push(temp);
+                                                                    } else {
+                                                                        console.log(erro);
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    } else {
+                                                        console.log(erroo);
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        console.log(er);
+                                    }
+                                });
+                            });
+                            console.log("last");
+                            res.render("student-index", { foundEvents: allEvents });            
+                        } else {
+                            console.log(e);
+                        }
+                    });
+                });
+            } else {
+                console.log(error);
+            }
+        });
+    } else {
+        res.render("login");
+    }
+});
+
 // CLUB SIDE PAGES ALL
 app.get("/club-profile", (req, res) => {
     if(clubloggedIn) {
@@ -298,18 +379,10 @@ app.get("/register-event", (req, res) => {
 });
 
 app.post("/register-event", (req, res) => {
-    let key,i=0;
-    for(key in req.body){
-        eventValues[i++]=req.body[key];
-    }
-    let ename= eventValues[0];
-    let venue = eventValues[1];
-    let edate = eventValues[2];
-    let max_no_of_participant = eventValues[3];
-    let branches = eventValues[4];
-    let years = eventValues[5];
-    let remarks = eventValues[6];
-    
+    const{ename,venue,edate,max_no_of_participant,remarks} = req.body;
+    years = req.body.year;
+    branches = req.body.branch;
+
     if (!req.files || Object.keys(req.files).length === 0) {
         failure=true;
         msg = "No files were uploaded";
@@ -329,21 +402,24 @@ app.post("/register-event", (req, res) => {
         connection.query("INSERT INTO events(ename, venue, edate, max_no_of_participant, remarks, cname, poster) VALUES(?)", [[ename, venue, edate, max_no_of_participant, remarks,cname, file.name]], (err, results) => {
             if(!err) {
                     let sql = "INSERT INTO year(ID,years) VALUES ?";
-                    for(i=0;i<years.length;i++){
-                        connection.query(sql,[[[results.insertId,years[i]]]],(err,resul)=>{
+                    async.forEachOf(years, (push_year,i, callback) =>{
+                        connection.query(sql,[[[results.insertId,push_year]]],(err,resul)=>{
                             if(err){
                                 throw err;
                             }
+                            callback(null);
                         });
-                    }
+                    });
+
                     sql = "INSERT INTO branch(ID,branches) VALUES ?";
-                    for(i=0;i<years.length;i++){
+                    async.forEachOf(branches, (push_branch,i, callback) =>{
                         connection.query(sql,[[[results.insertId,branches[i]]]],(err,resul)=>{
                             if(err){
                                 throw err;
                             }
+                            callback(null);
                         });
-                    }
+                    });
                 res.redirect("/club-profile");
             } else {
                 console.log(err);
@@ -391,15 +467,7 @@ app.get("/specific-event", (req, res) => {
 
 
 app.post("/specific-event", (req, res) => {
-    let key,i=0;
-    for(key in req.body){
-        eventValues[i++]=req.body[key];
-    }
-    let ename= eventValues[0];
-    let venue = eventValues[1];
-    let edate = eventValues[2];
-    let max_no_of_participant = eventValues[3];
-    let remarks = eventValues[4];
+    const{ename,venue,edate,max_no_of_participant,remarks} = req.body;
 
     if(ename==="" || venue==="" || edate==="" || remarks===""){
         failure=true;

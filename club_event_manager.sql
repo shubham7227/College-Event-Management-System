@@ -1,6 +1,14 @@
 DROP DATABASE IF EXISTS club_event_manager;
 CREATE DATABASE club_event_manager;
 USE club_event_manager;
+CREATE TABLE club(
+	cname			VARCHAR(40)			PRIMARY KEY,
+	email			VARCHAR(50)			NOT NULL,
+    password		VARCHAR(50)			NOT NULL,
+    phno            VARCHAR(10)         NOT NULL,
+    logo            VARCHAR(255)
+);
+
 
 CREATE TABLE student(
 	regno			VARCHAR(9)			PRIMARY KEY,
@@ -10,15 +18,10 @@ CREATE TABLE student(
     mname           VARCHAR(20),
     lname           VARCHAR(20)         NOT NULL,
     phno            VARCHAR(10)         NOT NULL,
-    club            VARCHAR(40)
-);
-
-CREATE TABLE club(
-	cname			VARCHAR(40)			PRIMARY KEY,
-	email			VARCHAR(50)			NOT NULL,
-    password		VARCHAR(50)			NOT NULL,
-    phno            VARCHAR(10)         NOT NULL,
-    logo            VARCHAR(255)
+    syear           VARCHAR(2)          NOT NULL,
+    sbranch         VARCHAR(3)          NOT NULL,
+    cname           VARCHAR(40),
+    FOREIGN KEY (cname) REFERENCES club(cname)
 );
 
 CREATE TABLE events(
@@ -58,7 +61,51 @@ CREATE table branch(
 
 CREATE table year(
     ID INT NOT NULL,
-    years VARCHAR(7) NOT NULL,
+    years VARCHAR(2) NOT NULL,
     PRIMARY KEY (years,ID),
     FOREIGN KEY (ID) REFERENCES events(ID)
 );
+
+DELIMITER //
+CREATE FUNCTION extractyear(reg_no VARCHAR(9))
+RETURNS VARCHAR(2)
+DETERMINISTIC
+BEGIN
+    DECLARE temp_year VARCHAR(2);
+    SET temp_year = SUBSTRING(reg_no,1,2);
+    RETURN (temp_year);
+END //
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER findyear
+BEFORE INSERT ON student FOR EACH ROW
+BEGIN
+    SET NEW.syear = extractyear(new.regno);
+END //   
+
+DELIMITER ;
+
+
+DELIMITER //
+CREATE FUNCTION extractbranch(reg_no VARCHAR(9))
+RETURNS VARCHAR(3)
+DETERMINISTIC
+BEGIN
+    DECLARE temp_branch VARCHAR(3);
+    SET temp_branch = UPPER(SUBSTRING(reg_no,3,3));
+    RETURN (temp_branch);
+END //
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER findbranch
+    BEFORE INSERT
+    ON student FOR EACH ROW
+BEGIN
+    SET NEW.sbranch = extractbranch(new.regno);
+END //    
+
+DELIMITER ;
