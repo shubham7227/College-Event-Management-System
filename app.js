@@ -7,6 +7,7 @@ const async = require("async");
 const app = express();
 const fileUpload = require('express-fileupload');
 const { json } = require("express");
+const util = require("util");
 
 app.use(fileUpload());
 app.set("view engine", "ejs");
@@ -18,6 +19,8 @@ const connection = mysql.createConnection({
     user: "root",
     password: "9866",
     database: "club_event_manager"
+},()=>{
+    console.log("DATABASE CONNECTED");
 });
 
 let password = "";
@@ -288,69 +291,37 @@ function isValids(phno) {
     return true;
 }
 
+app.get("/student-index", async(req,res)=>{
+    const query = util.promisify(connection.query).bind(connection);
+    if(studentloggedIn){
+        var allEvents=[];
+        try{
+            var result = await query("SELECT * FROM student WHERE email=?",[email]);
+            var result1 = await query("SELECT ID, ename, poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE DATE(edate) >= DATE(NOW()) ORDER BY edate");
+            for(let event of result1){
+                var result2 = await query("SELECT * FROM year WHERE ID=?", [event.ID]);
+                for(let year1 of result2){
+                    if (year1.years === result[0].syear){
+                        var result3=await query("SELECT * FROM branch WHERE ID=?", [event.ID]);
+                        for(let branch1 of result3){
+                            if (branch1.branches === result[0].sbranch){
+                                let temp = {ID: event.ID,
+                                        ename: event.ename,
+                                        poster: event.poster,
+                                        day: event.day,
+                                        month: event.month
+                                    };
+                                allEvents.push(temp);
+                            }
+                        };
+                    }
+                };
+            };
+            res.render("student-index", { foundEvents: allEvents });
+        }catch(error){
+            console.log(error);
 
-app.get("/student-index", (req, res) => {
-    if(studentloggedIn) {
-       var allEvents=[];
-        connection.query("SELECT * FROM student WHERE email=?", [email], (error, loggedin_std) => {
-            if (!error) {
-                async.forEachOf(loggedin_std, (thisstudent, k) => {
-                    console.log("second");
-                    connection.query("SELECT ID FROM events WHERE DATE(edate) >= DATE(NOW()) ORDER BY edate", (e, events) => {
-                        if (!e) {
-                            console.log("third");
-                            async.forEachOf(events, (thisevent, i) => {
-                                connection.query("SELECT * FROM year WHERE ID=?", [thisevent.ID], (er, year) => {
-                                    if (!er) {
-                                        console.log("fourth");
-                                        async.forEachOf(year, (thisyear, j) => {
-                                            if (thisyear.years === thisstudent.syear) {
-                                                connection.query("SELECT * FROM branch WHERE ID=?", [thisyear.ID], (erroo, branch) => {
-                                                    if (!erroo) {
-                                                        console.log("fifth");
-                                                        async.forEachOf(branch, (thisbranch, l) => {
-                                                            if (thisbranch.branches === thisstudent.sbranch) {
-                                                                connection.query("SELECT ID, ename, poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE ID=?", [thisbranch.ID], (erro, foundevent) => {
-                                                                    if (!erro) {
-                                                                        console.log("fifth");
-                                                                        let temp = {
-                                                                            ID: foundevent[0].ID,
-                                                                            ename: foundevent[0].ename,
-                                                                            poster: foundevent[0].poster,
-                                                                            day: foundevent[0].day,
-                                                                            month: foundevent[0].month
-                                                                        };
-                                                                        allEvents.push(temp);
-                                                                    } else {
-                                                                        console.log(erro);
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-                                                    } else {
-                                                        console.log(erroo);
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    } else {
-                                        console.log(er);
-                                    }
-                                });
-                            });
-                            console.log("last");
-                            res.render("student-index", { foundEvents: allEvents });            
-                        } else {
-                            console.log(e);
-                        }
-                    });
-                });
-            } else {
-                console.log(error);
-            }
-        });
-    } else {
-        res.render("login");
+        }
     }
 });
 
