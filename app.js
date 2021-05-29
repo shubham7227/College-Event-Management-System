@@ -8,6 +8,8 @@ const app = express();
 const fileUpload = require('express-fileupload');
 const { json } = require("express");
 const util = require("util");
+const e = require("express");
+const { fail } = require("assert");
 
 app.use(fileUpload());
 app.set("view engine", "ejs");
@@ -19,8 +21,6 @@ const connection = mysql.createConnection({
     user: "root",
     password: "9866",
     database: "club_event_manager"
-},()=>{
-    console.log("DATABASE CONNECTED");
 });
 
 let password = "";
@@ -144,6 +144,7 @@ app.get("/student-signup", (req, res) => {
 });
 
 app.post("/student-signup", (req, res) => {
+    let photo = "noimage.png";
     fname = req.body.fname;
     mname = req.body.mname;
     lname = req.body.lname;
@@ -151,13 +152,12 @@ app.post("/student-signup", (req, res) => {
     regno = req.body.regno;
     password = req.body.password;
     phno = req.body.phno;
-    club = req.body.club;
 
     connection.query("SELECT * FROM student WHERE email = ? OR regno = ?", [email, regno], (err, foundUsers) => {
         if(!err) {
             if(foundUsers.length === 0) {
                 if(email!=="" && regno!="" && password!="" && isValid(regno) && isValids(phno)) {
-                    connection.query("INSERT INTO student(fname,mname,lname,email,regno,password,phno) VALUES(?)", [[fname,mname,lname,email,regno,password,phno]], (error, result) => {
+                    connection.query("INSERT INTO student(fname,mname,lname,email,regno,password,phno,photo) VALUES(?)", [[fname,mname,lname,email,regno,password,phno,photo]], (error, result) => {
                         if(!error) {
                             res.redirect("/student-login");
                         } else {
@@ -322,7 +322,177 @@ app.get("/student-index", async(req,res)=>{
             console.log(error);
 
         }
+    }else {
+        res.render("login");
     }
+});
+
+app.post("/student-index", (req,res)=>{
+    eventid = req.body.clicked;
+    res.redirect("student-event-view");
+});
+
+
+app.get("/student-event-view", (req, res) => {
+    if(studentloggedIn) {
+        connection.query("SELECT ID,ename, venue, DATE_FORMAT(edate, '%Y-%m-%d') dat, max_no_of_participant, remarks, cname, poster FROM events WHERE ID = ? ORDER BY edate",[eventid], (err, events) => {
+            if(!err) {
+                connection.query("SELECT regno FROM student WHERE email=?",[email],(err,student)=>{
+                    if(!err){
+                        connection.query("SELECT cname,email,phno FROM club WHERE cname=?",[events[0].cname],(err,club)=>{
+                            res.render("student-event-view", {specEvent: events,specStudent: student,club: club, failure: failure, msg: msg});
+                            failure = false;
+                            msg = "";
+                        });
+                    }else{
+                        console.log(err);
+                    }
+                });
+            } else {
+                console.log(err);
+            }
+        });
+    } else {
+        res.render("login");
+    }
+});
+
+app.get("/student-profile", async(req, res) => {
+    const query = util.promisify(connection.query).bind(connection);
+    if(studentloggedIn){
+        var allEvents=[];
+        try{
+            var result = await query("SELECT * FROM student WHERE email=?",[email]);
+            var result1 = await query("SELECT ID FROM participates WHERE regno=?",[result[0].regno]);
+            for(let event of result1){
+                var result2 = await query("SELECT ID, ename, poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE ID=? ORDER BY edate",[event.ID]);
+                let temp = {ID: result2[0].ID,
+                        ename: result2[0].ename,
+                        poster: result2[0].poster,
+                        day: result2[0].day,
+                        month: result2[0].month
+                    };
+                allEvents.push(temp);
+            };
+            res.render("student-profile", { foundStudent: result, foundEvents: allEvents });
+        }catch(error){
+            console.log(error);
+        }
+    }else {
+        res.render("login");
+    }
+});
+
+
+app.get("/edit-student-profile", (req, res) => {
+    if(studentloggedIn) {
+        connection.query("SELECT * FROM student WHERE email = ? ",[email], (err, student) => {
+            if(!err) {
+                res.render("edit-student-profile", {foundStudent: student, failure: failure, msg: msg});
+                failure = false;
+                msg = "";
+            } else {
+                console.log(err);
+            }
+        });
+    } else {
+        res.render("login");
+    }
+});
+
+
+app.post("/edit-student-profile", (req, res) => {
+    let oldemail=email;
+    let photos="";
+    fname=req.body.fname;
+    mname=req.body.mname;
+    lname=req.body.lname;
+    email = req.body.email;
+    password = req.body.password;
+    phno = req.body.phno;
+    cname = req.body.cname;
+    connection.query("SELECT * FROM student where email=?",[oldemail],(err,results)=>{
+        if(!err){
+            if(email===""){
+                email=results[0].email;
+            }
+            if(password===""){
+                password=results[0].password;
+            }
+            if(phno===""){
+                phno=results[0].phno;
+            }
+            if (!req.files || Object.keys(req.files).length === 0) {
+                photos = results[0].photo;
+            }else{
+                let file = req.files.photo;
+                photos = file.name;
+                file.mv('public/images/student_photo/'+photos, function(err){});
+            }
+            if(isValids(phno)){
+                if(cname===""){
+                    connection.query("UPDATE student SET fname=?, mname=?, lname=?, email=?, phno=?, password=?, photo=? WHERE email=?", [fname,mname,lname,email, phno, password,photos, oldemail], (err, result) => {
+                        if(!err){
+                            res.redirect("student-profile");
+                        }
+                        else{
+                            console.log(err);
+                        }
+                    });
+                }else{
+                    connection.query("UPDATE student SET fname=?, mname=?, lname=?, email=?, phno=?, password=?, cname=?, photo=? WHERE email=?", [fname,mname,lname,email, phno, password,cname,photos, oldemail], (err, result) => {
+                        if(!err){
+                            res.redirect("student-profile");
+                        }
+                        else{
+                            failure = true;
+                            msg="Club Name Invalid";
+                            res.redirect("/edit-student-profile");
+                        }
+                    });
+                }
+            }else{
+                failure = true;
+                msg="Phone number Invalid";
+                res.redirect("/edit-student-profile");
+            }
+        }else{
+            console.log(error);
+        }
+    });      
+});
+
+app.post("/student-event-register",(req,res) =>{
+    if(studentloggedIn){
+        regno=req.body.regno;
+        ID=req.body.ID;
+        connection.query("SELECT total_participant, max_no_of_participant FROM events WHERE ID=?",[ID],(err,resul)=>{
+            if(!err){
+                if(resul[0].total_participant<resul[0].max_no_of_participant){
+                    connection.query("INSERT INTO participates(regno,ID) VALUES(?)",[[regno,ID]],(erro,result)=>{
+                        if(!erro){
+                            connection.query("UPDATE events SET total_participant = total_participant+1 WHERE ID=?",[ID],(err,results)=>{
+                                res.redirect("student-index");
+                            });
+                        }else{
+                            failure=true;
+                            msg="Already Registered";
+                            res.redirect("student-event-view");
+                        }
+                    });
+                }else{
+                    failure=true;
+                    msg="Cannot Register Event Full";
+                    res.redirect("student-event-view");
+                }
+            }else{
+                console.log(err);
+            }
+        });
+    }else{
+        res.render("login");
+    }
+
 });
 
 // CLUB SIDE PAGES ALL
@@ -353,6 +523,7 @@ app.post("/register-event", (req, res) => {
     const{ename,venue,edate,max_no_of_participant,remarks} = req.body;
     years = req.body.year;
     branches = req.body.branch;
+    total = 0;
 
     if (!req.files || Object.keys(req.files).length === 0) {
         failure=true;
@@ -370,7 +541,7 @@ app.post("/register-event", (req, res) => {
     let file = req.files.poster;
 
     file.mv('public/images/uploaded_image/'+file.name, function(err){
-        connection.query("INSERT INTO events(ename, venue, edate, max_no_of_participant, remarks, cname, poster) VALUES(?)", [[ename, venue, edate, max_no_of_participant, remarks,cname, file.name]], (err, results) => {
+        connection.query("INSERT INTO events(ename, venue, edate, max_no_of_participant,total_participant, remarks, cname, poster) VALUES(?)", [[ename, venue, edate, max_no_of_participant,total, remarks,cname, file.name]], (err, results) => {
             if(!err) {
                     let sql = "INSERT INTO year(ID,years) VALUES ?";
                     async.forEachOf(years, (push_year,i, callback) =>{
@@ -492,7 +663,7 @@ app.post("/past-events", (req,res)=>{
 
 app.get("/specific-event-view", (req, res) => {
     if(clubloggedIn) {
-        connection.query("SELECT ename, venue, DATE_FORMAT(edate, '%Y-%m-%d') dat, max_no_of_participant, remarks, cname, poster FROM events WHERE ID = ? ORDER BY edate",[eventid], (err, events) => {
+        connection.query("SELECT ename, venue,total_participant, DATE_FORMAT(edate, '%Y-%m-%d') dat, max_no_of_participant, remarks, cname, poster FROM events WHERE ID = ? ORDER BY edate",[eventid], (err, events) => {
             if(!err) {
                 res.render("specific-event-view", {specEvent: events, failure: failure, msg: msg});
                 failure = false;
@@ -566,6 +737,32 @@ app.post("/edit-club-profile", (req, res) => {
             console.log(error);
         }
     });      
+});
+
+app.get("/view-event-participant", async(req, res) => {
+    const query = util.promisify(connection.query).bind(connection);
+    if(clubloggedIn) {
+        var participant_list=[];
+        try{
+            var result = await query("SELECT * FROM participates WHERE ID=? ",[eventid]);
+            for(let event of result){
+                var result1 = await query("SELECT fname,mname,lname,email,phno,regno FROM student WHERE regno=?",[event.regno]);
+                let temp = {fname: result1[0].fname,
+                    mname: result1[0].mname,
+                    lname: result1[0].lname,
+                    email: result1[0].email,
+                    phno: result1[0].phno,
+                    regno: result1[0].regno
+                };
+                participant_list.push(temp);
+            };
+            res.render("view-event-participant",{participant_lists: participant_list});
+        }catch(error){
+            console.log(error);
+        }
+    } else {
+        res.render("login");
+    }
 });
 
 app.listen(3000, () => console.log("Server started on port 3000"));

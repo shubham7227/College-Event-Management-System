@@ -20,6 +20,7 @@ CREATE TABLE student(
     phno            VARCHAR(10)         NOT NULL,
     syear           VARCHAR(2)          NOT NULL,
     sbranch         VARCHAR(3)          NOT NULL,
+    photo           VARCHAR(255)        NOT NULL,
     cname           VARCHAR(40),
     FOREIGN KEY (cname) REFERENCES club(cname)
 );
@@ -30,6 +31,7 @@ CREATE TABLE events(
     venue varchar(50) NOT NULL,
     edate DATE NOT NULL ,
     max_no_of_participant INT NOT NULL ,
+    total_participant INT NOT NULL,
     remarks TEXT NOT NULL,
     cname VARCHAR(40),
     poster VARCHAR(255) NOT NULL,

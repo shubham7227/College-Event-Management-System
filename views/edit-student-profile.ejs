@@ -14,13 +14,14 @@
                 <div class="row align-items-center">
                     <div class="col-10 col-lg-4">
                         <h1 class="site-branding flex">
-                            <a href="/club-profile">Event Manager</a>
+                            <a href="/student-profile">Event Manager</a>
                         </h1>
                     </div>
 
                     <div class="col-2 col-lg-8">
                         <nav class="all-header">
-                            <a class="boton" href="/club-profile">PROFILE</a>
+                            <a class="boton" href="/student-index">HOME</a>
+                            <a class="boton" href="/student-profile">PROFILE</a>
                             <a class="boton" href="/logout">LOGOUT</a>
                         </nav>
                     </div>
@@ -31,34 +32,53 @@
 
 <div class="container emp-profile">
     
-    <% foundClub.forEach(club => { %>
-        <form action="/edit-club-profile" method="post" encType="multipart/form-data">
+    <% foundStudent.forEach(student => { %>
+        <form action="/edit-student-profile" method="post" encType="multipart/form-data">
             <div class="row">
                 <div class="col-md-4">
                     <div class="profile-img">
-                        <img id="output" src="images/logos/<%= club.logo %>" alt="logo"/>
+                        <img id="output" src="images/student_photo/<%= student.photo %>" alt="logo"/>
                         <div class="file btn btn-lg btn-primary">Change Photo
-                            <input type="file" name="logo" accept="image/*" onchange="loadFile(event)"/>
+                            <input type="file" name="photo" accept="image/*" onchange="loadFile(event)"/>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="profile-head">
                         <h2>
-                            <%= club.cname %>
+                            <%= student.regno %>
                         </h2>
                         <div class="form-group">
-                            <input name="email" type="email" value="<%= club.email %>" id="cname" autocomplete="off">
+                            <label for="fname">First Name</label>
+                            <input name="fname" type="text" value="<%= student.fname %>" id="fname" autocomplete="off">
                         </div>
                         <div class="form-group">
-                            <input name="phno" type="text" value="<%= club.phno %>" id="cname" autocomplete="off">
+                            <label for="mname">Middle Name</label>
+                            <input name="mname" type="text" value="<%= student.mname %>" id="mname" autocomplete="off">
                         </div>
                         <div class="form-group">
+                            <label for="lname">Last Name</label>
+                            <input name="lname" type="text" value="<%= student.lname %>" id="lname" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input name="email" type="email" value="<%= student.email %>" id="email" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="phno">Phone No</label>
+                            <input name="phno" type="text" value="<%= student.phno %>" id="phno" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="club">Club</label>
+                            <input name="cname" type="text" value="<%= student.cname %>" id="cname" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="fname">Password</label>
                             <input name="password" type="password" placeholder="Password" id="password">
                         </div>
                         <p class="info">* only enter the values for the fields that you wish to update</p>
                         <button type="submit" id="register" class="btn btn-primary">UPDATE</button>
-                        <a href="/club-profile">
+                        <a href="/student-profile">
                             <div class="btn btn-primary">CANCEL</div>
                         </a>
                     </div>
