@@ -126,6 +126,19 @@
   border-color: #6807f9;
   color: #fff;
 }
+
+.btn.btn-primary-members {
+  background-color: #0415aa;
+  float: right;
+  border-color: 0415aa;
+  color: #fff;
+  margin-right: 5%;
+}
+.btn.btn-delete {
+  background: red;
+  border-color: red;
+  color: #fff;
+}
 .btn.btn-primary:hover,
 .btn.btn-primary:focus {
   border-color: #5305c8 !important;
@@ -463,5 +476,36 @@ nav a:hover:after {
   padding-bottom: 12px;
   text-align: left;
   background-color: #04aa6d;
+  color: white;
+}
+
+
+/* member TABLE */
+#members {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  margin: 5%;
+  width: 90%;
+}
+
+#members td,
+#members th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#members tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#members tr:hover {
+  background-color: #ddd;
+}
+
+#members th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #0415aa;
   color: white;
 }

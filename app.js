@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -20,10 +19,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "9866",
-    database: "club_event_manager",
+    host: "freedb.tech",
+    user: "freedbtech_sulavgiri",
+    password: "Spfn@hXgn7QUe@3",
+    database: "freedbtech_clubeventmanager",
 });
 
 let password = "";
@@ -59,7 +58,7 @@ app.get("/logout", (req, res) => {
 
 app.get("/student-login", (req, res) => {
     if (studentloggedIn === true) {
-        res.render("student-index");
+        res.redirect("student-index");
     } else {
         studentloggedIn = false;
         res.render("student-login", { failure: failure, msg: msg });
@@ -679,6 +678,12 @@ app.post("/register-event", (req, res) => {
     const { ename, venue, edate, max_no_of_participant, remarks } = req.body;
     years = req.body.year;
     branches = req.body.branch;
+    if(!years){
+        years=['20','19','18','17'];
+    }
+    if(!branches){
+        branches=['BCE','BME','BCL','BEE'];
+    }
     total = 0;
 
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -774,25 +779,61 @@ app.post("/registered-event", (req, res) => {
     res.redirect("specific-event");
 });
 
-app.get("/specific-event", (req, res) => {
+app.get("/specific-event", async(req, res) => {
+    const query = util.promisify(connection.query).bind(connection);
     if (clubloggedIn) {
-        connection.query(
-            "SELECT ename, venue, DATE_FORMAT(edate, '%Y-%m-%d') dat, max_no_of_participant, remarks, cname, poster FROM events WHERE ID = ?",
-            [eventid],
-            (err, events) => {
-                if (!err) {
-                    res.render("specific-event", {
-                        specEvent: events,
-                        failure: failure,
-                        msg: msg,
-                    });
-                    failure = false;
-                    msg = "";
-                } else {
-                    console.log(err);
+        try{
+            let BCE=BCL=BEE=BME=false;
+            let first=second=third=fourth=false;
+            let events = await query("SELECT ename, venue, DATE_FORMAT(edate, '%Y-%m-%d') dat, max_no_of_participant, remarks, cname, poster FROM events WHERE ID = ?",[eventid]);
+            let branch = await query("SELECT branches FROM branch WHERE ID=?",[eventid]);
+            let year = await query("SELECT years FROM year WHERE ID=?",[eventid]);
+            for(let i of branch){
+                if(i.branches==="BCE"){
+                    BCE=true;
+                }
+                if(i.branches==="BCL"){
+                    BCL=true;
+                }
+                if(i.branches==="BME"){
+                    BME=true;
+                }
+                if(i.branches==="BEE"){
+                    BEE=true;
                 }
             }
-        );
+            for(let i of year){
+                if(i.years==="20"){
+                    first=true;
+                }
+                if(i.years==="19"){
+                    second=true;
+                }
+                if(i.years==="18"){
+                    third=true;
+                }
+                if(i.years==="17"){
+                    fourth=true;
+                }
+            }
+            res.render("specific-event", {
+                specEvent: events,
+                failure: failure,
+                msg: msg,
+                BCE: BCE,
+                BCL: BCL,
+                BME: BME,
+                BEE: BEE,
+                first: first,
+                second: second,
+                third: third,
+                fourth: fourth
+            });
+            failure = false;
+            msg = "";
+        }catch(err){
+            console.log(err);
+        }
     } else {
         res.render("login");
     }
@@ -800,8 +841,10 @@ app.get("/specific-event", (req, res) => {
 
 app.post("/specific-event", (req, res) => {
     const { ename, venue, edate, max_no_of_participant, remarks } = req.body;
+    years = req.body.year;
+    branches = req.body.branch;
 
-    if (ename === "" || venue === "" || edate === "" || remarks === "") {
+    if (ename === "" || venue === "" || edate === "" || remarks === "" || max_no_of_participant==="") {
         failure = true;
         msg = "Please fill all the required fields";
         res.redirect("/specific-event");
@@ -813,6 +856,35 @@ app.post("/specific-event", (req, res) => {
             [ename, venue, edate, max_no_of_participant, remarks, eventid],
             (err, results) => {
                 if (!err) {
+                    connection.query("DELETE FROM year WHERE ID=?",eventid);
+                    connection.query("DELETE FROM branch WHERE ID=?",eventid);
+                    let sql = "INSERT INTO year(years,ID) VALUES(?)";
+                    async.forEachOf(years, (push_year, i, callback) => {
+                        connection.query(
+                            sql,
+                            [[push_year,eventid]],
+                            (err, resul) => {
+                                if (err) {
+                                    throw err;
+                                }
+                                callback(null);
+                            }
+                        );
+                    });
+
+                    sql = "INSERT INTO branch(branches,ID) VALUES(?)";
+                    async.forEachOf(branches, (push_branch, i, callback) => {
+                        connection.query(
+                            sql,
+                            [[push_branch,eventid]],
+                            (err, resul) => {
+                                if (err) {
+                                    throw err;
+                                }
+                                callback(null);
+                            }
+                        );
+                    });
                     res.redirect("/registered-event");
                 } else {
                     console.log(err);
@@ -835,6 +907,33 @@ app.post("/specific-event", (req, res) => {
                 ],
                 (err, results) => {
                     if (!err) {
+                        let sql = "UPDATE year SET years=? WHERE ID=?";
+                    async.forEachOf(years, (push_year, i, callback) => {
+                        connection.query(
+                            sql,
+                            [push_year,eventid],
+                            (err, resul) => {
+                                if (err) {
+                                    throw err;
+                                }
+                                callback(null);
+                            }
+                        );
+                    });
+
+                    sql = "UPDATE branch SET branches=? WHERE ID=?";
+                    async.forEachOf(branches, (push_branch, i, callback) => {
+                        connection.query(
+                            sql,
+                            [push_branch,eventid],
+                            (err, resul) => {
+                                if (err) {
+                                    throw err;
+                                }
+                                callback(null);
+                            }
+                        );
+                    });
                         res.redirect("/registered-event");
                     } else {
                         console.log(err);
@@ -842,6 +941,24 @@ app.post("/specific-event", (req, res) => {
                 }
             );
         });
+    }
+});
+
+app.get("/delete-event", async(req,res) =>{
+    const query = util.promisify(connection.query).bind(connection);
+    if (clubloggedIn) {
+        try{
+            await query("DELETE FROM participates WHERE ID=?",[eventid]);
+            await query("DELETE FROM branch WHERE ID=?",[eventid]);
+            await query("DELETE FROM year WHERE ID=?",[eventid]);
+            await query("DELETE FROM events WHERE ID=?",[eventid]);
+
+            res.redirect("registered-event");
+        }catch(err){
+            console.log(err);
+        }
+    } else {
+        res.render("login");
     }
 });
 
@@ -994,6 +1111,87 @@ app.get("/view-event-participant", async (req, res) => {
             });
         } catch (error) {
             console.log(error);
+        }
+    } else {
+        res.render("login");
+    }
+});
+
+app.get("/club-members", async(req, res) => {
+    const query = util.promisify(connection.query).bind(connection);
+    if (clubloggedIn) {
+        let foundMembers=[];
+        try{
+            let foundClub = await query("SELECT * FROM club WHERE cname = ? ",[cname]);
+            let members = await query("SELECT * FROM has_member WHERE cname = ?",[cname]);
+            for(let mem of members){
+                let result = await query("SELECT * FROM student WHERE regno=? ",[mem.regno]);
+                let temp={fname: result[0].fname,
+                mname: result[0].mname,
+                lname: result[0].lname,
+                phno: result[0].phno,
+                email: result[0].email,
+                designation: mem.designation,
+                domain: mem.domain,
+                regno: mem.regno,
+                cname: mem.cname
+                };
+                foundMembers.push(temp);
+            }
+            res.render("club-members", { foundClub: foundClub,foundMembers: foundMembers });
+        }catch(err){
+            console.log(err);
+        }
+    } else {
+        res.render("login");
+    }
+});
+
+app.get("/add-club-member",(req,res)=>{
+    if(clubloggedIn){
+        res.render("add-club-member",{failure: failure,msg: msg});
+        failure=false;
+        msg='';
+    }else{
+        res.render("login");
+    }
+});
+
+app.post("/add-club-member",async(req,res)=>{
+    const query = util.promisify(connection.query).bind(connection);
+    regno = req.body.regno;
+    designation = req.body.designation;
+    domain = req.body.domain;
+    try{
+        await query("INSERT INTO has_member(regno,cname,designation,domain) VALUES(?)",[[regno,cname,designation,domain]]);
+        await query("UPDATE student SET cname=? WHERE regno=? ",[cname,regno]);
+        res.redirect("club-members");
+    }catch(err){
+        if(err.code==='ER_DUP_ENTRY'){
+            failure=true;
+            msg='Already A member';
+            res.redirect("add-club-member");
+        }else{
+            failure=true;
+            msg='Cannot Find Student With Provided Registration Number';
+            res.redirect("add-club-member");
+        }
+    }
+});
+
+
+app.post("/delete-member", async(req,res) =>{
+    const query = util.promisify(connection.query).bind(connection);
+    if (clubloggedIn) {
+        regnoGet=req.body.regno;
+        clubGet=req.body.cname;
+        try{
+            await query("UPDATE student SET cname=null WHERE regno=?",[regnoGet]);
+            await query("DELETE FROM has_member WHERE regno=? AND cname=?",[regnoGet,clubGet]);
+            
+            res.redirect("club-members");
+        }catch(err){
+            console.log(err);
         }
     } else {
         res.render("login");

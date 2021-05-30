@@ -20,6 +20,7 @@
                     <div class="col-2 col-lg-8">
                         <nav class="all-header">
                             <a class="boton" href="/club-profile">PROFILE</a>
+                            <a class="boton" href="/club-members">MEMBERS</a>
                             <a class="boton" href="/logout">LOGOUT</a>
                         </nav>
                     </div>
@@ -46,22 +47,22 @@
         <form action="/register-event" method="post" encType="multipart/form-data">
             <div class="form-group">
               <label for="text-box">Event Name <a style="color: red;">*</a></label>
-              <input type="text" name="ename" class="form-control" id="ename" autocomplete="off">
+              <input type="text" name="ename" class="form-control" id="ename" autocomplete="off" required>
             </div>
             <div class="form-group">
                 <label for="text-box">Venue<a style="color: red;">*</a></label>
-                <input type="text" name="venue" class="form-control" id="venue" autocomplete="off">
+                <input type="text" name="venue" class="form-control" id="venue" autocomplete="off" required>
               </div>
               <div class="form-group">
                   <div class="branch">
                         <div class="branch1">
                             <label for="text-box">Date<a style="color: red;">*</a></label>
-                            <input type="date" name="edate" class="form-control" id="edate" autocomplete="off">
+                            <input type="date" name="edate" class="form-control" id="edate" autocomplete="off" required>
                         </div>
 
                         <div class="branch1">
-                            <label for="text-box">Number of Participants</label>
-                            <input type="text" name="max_no_of_participant" class="form-control" id="text-box" autocomplete="off">
+                            <label for="text-box">Number of Participants<a style="color: red;">*</a></label>
+                            <input type="text" name="max_no_of_participant" class="form-control" id="text-box" autocomplete="off" required>
                         </div>
                     </div>
               </div>
@@ -103,12 +104,12 @@
                 </div>
             <div class="form-group">
                 <label for="text-box">Event Poster<a style="color: red;">*</a></label>
-                <input type="file" name="poster" class="form-control" accept="image/*"/>
+                <input type="file" name="poster" class="form-control" accept="image/*" required/>
             </div>
 
             <div class="form-group">
                 <label for="big-text-box">Event Description<a style="color: red;">*</a></label>
-                <textarea class="form-control" name="remarks" id="remarks" rows="5" autocomplete="off"></textarea>
+                <textarea class="form-control" name="remarks" id="remarks" rows="5" autocomplete="off" required></textarea>
             </div>
             <button type="submit" id="register" class="btn btn-primary">Register</button>
             <a href="/club-profile">

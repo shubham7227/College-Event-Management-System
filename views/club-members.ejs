@@ -1,4 +1,4 @@
-<%- include("partials/header2", {title: "Club Profile"}) %>
+<%- include("partials/header2", {title: "Club Members"}) %>
 
 <body>
   <header class="site-header">
@@ -42,23 +42,40 @@
         <div class="col-md-2">
           <input type="submit" class="profile-edit-btn" value="Edit Profile" />
         </div>
-
-        <div class="hero-content">
-          <div class="container">
-            <div class="row">
-              <div class="col-12">
-                <div class="entry-footer">
-                  <a href="/register-event" class="btn">Register an Event</a>
-                  <a href="/registered-event" class="btn"
-                    >View Registered Events</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </form>
     <% }); %>
+        <table id="members">
+          <tr>
+            <th>S.No.</th>
+            <th>Name</th>
+            <th>Registration Number</th>
+            <th>E-mail</th>
+            <th>Phone Number</th>
+            <th>Designation</th>
+            <th>Domain</th>
+            <th>Remove</th>
+          </tr>
+          <% i=1 %><% foundMembers.forEach(member => { %>
+          <tr>
+            <td><%= i %></td>
+            <td><%= member.fname %> <%= member.mname %> <%=member.lname %></td>
+            <td><%= member.regno %></td>
+            <td><%= member.email %></td>
+            <td><%= member.phno %></td>
+            <td><%= member.designation %></td>
+            <td><%= member.domain %></td>
+            <td><form action="/delete-member" method="post">
+              <input type="text" name="regno" value="<%= member.regno %>" hidden/>
+              <input type="text" name="cname" value="<%= member.cname %>" hidden/>
+              <button type="submit" class="btn btn-delete">Remove</button>
+            </form></td>
+          </tr>
+          <% i=i+1 %> <% }); %>
+        </table>
+        <a href="/add-club-member">
+          <div class="btn btn-primary-members">Add Member</div>
+        </a>
+        <br>
   </div>
 <%- include("partials/footer2") %>

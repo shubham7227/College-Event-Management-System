@@ -17,6 +17,7 @@
           <div class="col-2 col-lg-8">
             <nav class="all-header">
               <a class="boton" href="/club-profile">PROFILE</a>
+              <a class="boton" href="/club-members">MEMBERS</a>
               <a class="boton" href="/logout">LOGOUT</a>
             </nav>
           </div>
@@ -124,23 +125,19 @@
         <%= events.remarks %></textarea>
       </div>
 
-      <a href="/past-events">
-        <div class="btn btn-primary">BACK</div>
-      </a>
+      <div class="row">
+        <div class="col-md-9">
+          <a href="/past-events">
+            <div class="btn btn-primary">BACK</div>
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="/delete-event">
+            <div class="btn btn-delete">DELETE EVENT</div>
+          </a>
+        </div>
       
     </div>
     <% }); %>
   </div>
-
-  <script>
-    var loadFile = function (event) {
-      var output = document.getElementById("output");
-      output.src = URL.createObjectURL(event.target.files[0]);
-      output.onload = function () {
-        URL.revokeObjectURL(output.src);
-      };
-    };
-  </script>
-
-  <%- include("partials/footer2") %>
-</body>
+<%- include("partials/footer2") %>

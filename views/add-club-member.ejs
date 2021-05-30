@@ -1,0 +1,72 @@
+<%- include("partials/header2", {title: "Register Event"}) %>
+
+<% if(failure) { %>
+    <div class="alert alert-danger" role="alert">
+        <%= msg %>
+    </div>
+<% } %>
+
+<body>
+    <header class="site-header">
+        <div class="header-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-10 col-lg-4">
+                        <h1 class="site-branding flex">
+                            <a href="/club-profile">Event Manager</a>
+                        </h1>
+                    </div>
+
+                    <div class="col-2 col-lg-8">
+                        <nav class="all-header">
+                            <a class="boton" href="/club-profile">PROFILE</a>
+                            <a class="boton" href="/club-members">MEMBERS</a>
+                            <a class="boton" href="/logout">LOGOUT</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+<div class="event-reg-form">
+    <div class="main-content">
+        <div class="container">
+            <div class="entry-header">
+                <div class="entry-title">
+                    <h2>Add new event</h2>
+                    <h6 style="color: red;">* required</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="event-reg">
+        <form action="/add-club-member" method="post" encType="multipart/form-data">
+            <div class="form-group">
+                <div class="row">
+                <div class="col-md-4">
+                    <label for="ename">Registration Number<a style="color: red;">*</a></label>
+                    <input type="text" name="regno" class="form-control" id="ename" autocomplete="off" autofocus required>
+                    </div>
+                <div class="col-md-4">
+                    <label for="rolex">Designation<a style="color: red;">*</a></label>
+                    <input type="text" name="designation" class="form-control" id="role" autocomplete="off" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="domain">Domain<a style="color: red;">*</a></label>
+                    <input type="text" name="domain" class="form-control" id="domain" autocomplete="off" required>
+                </div>
+                </div>
+            </div>
+            <button type="submit" id="register" class="btn btn-primary">Add</button>
+            <a href="/club-members">
+                <div class="btn btn-primary">CANCEL</div>
+            </a>
+        </form>
+    </div>
+</div>
+
+<%- include("partials/footer2") %>

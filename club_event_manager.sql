@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS club_event_manager;
-CREATE DATABASE club_event_manager;
-USE club_event_manager;
+DROP DATABASE IF EXISTS clubeventmanager;
+CREATE DATABASE clubeventmanager;
+USE clubeventmanager;
 CREATE TABLE club(
 	cname			VARCHAR(40)			PRIMARY KEY,
 	email			VARCHAR(50)			NOT NULL,
@@ -38,9 +38,11 @@ CREATE TABLE events(
     FOREIGN KEY (cname) REFERENCES club(cname)
 );
 
-CREATE TABLE member_of(
+CREATE TABLE has_member(
     regno VARCHAR(9) NOT NULL ,
     cname VARCHAR(40) NOT NULL,
+    designation VARCHAR(20) NOT NULL,
+    domain VARCHAR(20) NOT NULL,
     PRIMARY KEY (regno,cname),
     FOREIGN KEY (cname) REFERENCES club(cname),
     FOREIGN KEY (regno) REFERENCES student(regno)
@@ -108,6 +110,29 @@ CREATE TRIGGER findbranch
     ON student FOR EACH ROW
 BEGIN
     SET NEW.sbranch = extractbranch(new.regno);
+END //    
+
+DELIMITER ;
+
+
+DELIMITER //
+CREATE FUNCTION cap_regno(reg_no VARCHAR(9))
+RETURNS VARCHAR(9)
+DETERMINISTIC
+BEGIN
+    DECLARE temp_regno VARCHAR(9);
+    SET temp_regno = UPPER(reg_no);
+    RETURN (temp_regno);
+END //
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER cap_reg
+    BEFORE INSERT
+    ON student FOR EACH ROW
+BEGIN
+    SET NEW.regno = cap_regno(new.regno);
 END //    
 
 DELIMITER ;

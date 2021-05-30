@@ -17,6 +17,7 @@
           <div class="col-2 col-lg-8">
             <nav class="all-header">
               <a class="boton" href="/club-profile">PROFILE</a>
+              <a class="boton" href="/club-members">MEMBERS</a>
               <a class="boton" href="/logout">LOGOUT</a>
             </nav>
           </div>
@@ -91,7 +92,7 @@
             </div>
 
             <div class="branch1">
-              <label for="text-box">Number of Participants</label>
+              <label for="text-box">Number of Participants<a style="color: red;">*</a></label>
               <input
                 type="text"
                 value="<%= events.max_no_of_participant %>"
@@ -103,6 +104,73 @@
             </div>
           </div>
         </div>
+        <div class="form-group">
+                    <div class="branch">
+                        <div class="branch1">
+                            <label for="text-box">Branch</label><br>
+                            <% if(BCE){ %>
+                              <input type="checkbox" id="branch1" name="branch" value="BCE" checked>
+                              <label for="branch1">Computer</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="branch1" name="branch" value="BCE">
+                              <label for="branch1">Computer</label><br>
+                            <% } %>
+                            <% if(BCL){ %>
+                              <input type="checkbox" id="branch2" name="branch" value="BCL" checked>
+                              <label for="branch2">Civil</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="branch2" name="branch" value="BCL">
+                              <label for="branch2">Civil</label><br>
+                            <% } %>
+                            <% if(BEE){ %>
+                              <input type="checkbox" id="branch3" name="branch" value="BEE" checked>
+                              <label for="branch3">Electrical</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="branch3" name="branch" value="BEE">
+                              <label for="branch3">Electrical</label><br>
+                            <% } %>
+                            <% if(BME){ %>
+                              <input type="checkbox" id="branch4" name="branch" value="BME" checked>
+                              <label for="branch4">Mechanical</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="branch4" name="branch" value="BME">
+                              <label for="branch4">Mechanical</label><br>
+                            <% } %>
+                        </div>
+
+                        <div class="branch1">
+                            <label for="text-box">Year</label><br>
+                            <% if(first){ %>
+                              <input type="checkbox" id="year1" name="year" value="20" checked>
+                              <label for="year1">First</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="year1" name="year" value="20">
+                              <label for="year1">First</label><br>
+                            <% } %>
+                            <% if(second){ %>
+                              <input type="checkbox" id="year2" name="year" value="19" checked>
+                              <label for="year2">Second</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="year2" name="year" value="19">
+                              <label for="year2">Second</label><br>
+                            <% } %>
+                            <% if(third){ %>
+                              <input type="checkbox" id="year3" name="year" value="18" checked>
+                              <label for="year3">Third</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="year3" name="year" value="18">
+                              <label for="year3">Third</label><br>
+                            <% } %>
+                            <% if(fourth){ %>
+                              <input type="checkbox" id="year4" name="year" value="17" checked>
+                              <label for="year4">Final</label><br>
+                            <% }else{ %>
+                              <input type="checkbox" id="year4" name="year" value="17">
+                              <label for="year4">Final</label><br>
+                            <% } %>
+                          </div>
+                    </div>
+                </div>
         <div class="form-group">
           <label for="text-box">Event Poster<a style="color: red">*</a></label>
           <div class="poster-img">
@@ -130,16 +198,23 @@
             id="remarks"
             rows="5"
             autocomplete="off"
-          >
-<%= events.remarks %></textarea
-          >
+          ><%= events.remarks %></textarea>
         </div>
-        <button type="submit" id="register" class="btn btn-primary">
-          UPDATE
-        </button>
-        <a href="/registered-event">
-          <div class="btn btn-primary">CANCEL</div>
-        </a>
+        <div class="row">
+          <div class="col-md-7">
+            <a href="/registered-event">
+              <div class="btn btn-primary">CANCEL</div>
+            </a>
+          </div>
+          <div class="col-md-5">
+            <a href="/delete-event">
+              <div class="btn btn-delete">DELETE EVENT</div>
+            </a>
+            <button type="submit" id="register" class="btn btn-primary">
+              UPDATE
+            </button>
+          </div>
+        </div>
       </form>
     </div>
     <% }); %>
@@ -155,5 +230,4 @@
     };
   </script>
 
-  <%- include("partials/footer2") %>
-</body>
+<%- include("partials/footer2") %>
