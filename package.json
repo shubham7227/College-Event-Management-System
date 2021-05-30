@@ -23,6 +23,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "mysql": "^2.18.1",
+    "opn": "^6.0.0",
     "util": "^0.12.4"
   }
 }

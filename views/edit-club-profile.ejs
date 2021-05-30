@@ -1,80 +1,105 @@
-
-<%- include("partials/header2", {title: "Edit Profile"}) %>
-
-    <% if(failure) { %>
-        <div class="alert alert-danger" role="alert">
-            <%= msg %>
-        </div>
-    <% } %>
+<%- include("partials/header2", {title: "Edit Profile"}) %> 
+<% if(failure) { %>
+    <div class="alert alert-danger" role="alert"><%= msg %></div>
+<% } %>
 
 <body>
-    <header class="site-header">
-        <div class="header-bar">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-10 col-lg-4">
-                        <h1 class="site-branding flex">
-                            <a href="/club-profile">Event Manager</a>
-                        </h1>
-                    </div>
+  <header class="site-header">
+    <div class="header-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-10 col-lg-4">
+            <h1 class="site-branding flex">
+              <a href="/club-profile">Event Manager</a>
+            </h1>
+          </div>
 
-                    <div class="col-2 col-lg-8">
-                        <nav class="all-header">
-                            <a class="boton" href="/club-profile">PROFILE</a>
-                            <a class="boton" href="/logout">LOGOUT</a>
-                        </nav>
-                    </div>
-                </div>
-            </div>
+          <div class="col-2 col-lg-8">
+            <nav class="all-header">
+              <a class="boton" href="/club-profile">PROFILE</a>
+              <a class="boton" href="/logout">LOGOUT</a>
+            </nav>
+          </div>
         </div>
-    </header>    
+      </div>
+    </div>
+  </header>
 
-<div class="container emp-profile">
-    
+  <div class="container emp-profile">
     <% foundClub.forEach(club => { %>
-        <form action="/edit-club-profile" method="post" encType="multipart/form-data">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="profile-img">
-                        <img id="output" src="images/logos/<%= club.logo %>" alt="logo"/>
-                        <div class="file btn btn-lg btn-primary">Change Photo
-                            <input type="file" name="logo" accept="image/*" onchange="loadFile(event)"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="profile-head">
-                        <h2>
-                            <%= club.cname %>
-                        </h2>
-                        <div class="form-group">
-                            <input name="email" type="email" value="<%= club.email %>" id="cname" autocomplete="off">
-                        </div>
-                        <div class="form-group">
-                            <input name="phno" type="text" value="<%= club.phno %>" id="cname" autocomplete="off">
-                        </div>
-                        <div class="form-group">
-                            <input name="password" type="password" placeholder="Password" id="password">
-                        </div>
-                        <p class="info">* only enter the values for the fields that you wish to update</p>
-                        <button type="submit" id="register" class="btn btn-primary">UPDATE</button>
-                        <a href="/club-profile">
-                            <div class="btn btn-primary">CANCEL</div>
-                        </a>
-                    </div>
-                </div>
+    <form
+      action="/edit-club-profile"
+      method="post"
+      encType="multipart/form-data"
+    >
+      <div class="row">
+        <div class="col-md-4">
+          <div class="profile-img">
+            <img id="output" src="images/logos/<%= club.logo %>" alt="logo" />
+            <div class="file btn btn-lg btn-primary">
+              Change Photo
+              <input
+                type="file"
+                name="logo"
+                accept="image/*"
+                onchange="loadFile(event)"
+              />
             </div>
-            </form>
-    <% }); %>          
-</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="profile-head">
+            <h2><%= club.cname %></h2>
+            <div class="form-group">
+              <input
+                name="email"
+                type="email"
+                value="<%= club.email %>"
+                id="cname"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                name="phno"
+                type="text"
+                value="<%= club.phno %>"
+                id="cname"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                id="password"
+              />
+            </div>
+            <p class="info">
+              * only enter the values for the fields that you wish to update
+            </p>
+            <button type="submit" id="register" class="btn btn-primary">
+              UPDATE
+            </button>
+            <a href="/club-profile">
+              <div class="btn btn-primary">CANCEL</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+    <% }); %>
+  </div>
 
-<script>
-    var loadFile = function(event) {
-      var output = document.getElementById('output');
+  <script>
+    var loadFile = function (event) {
+      var output = document.getElementById("output");
       output.src = URL.createObjectURL(event.target.files[0]);
-      output.onload = function() {
-        URL.revokeObjectURL(output.src)
-      }
+      output.onload = function () {
+        URL.revokeObjectURL(output.src);
+      };
     };
-</script>
-<%- include("partials/footer2") %>
+  </script>
+  <%- include("partials/footer2") %>
+</body>

@@ -1,87 +1,99 @@
 <%- include("partials/header2", {title: "Student Profile"}) %>
 
 <body>
-    <header class="site-header">
-        <div class="header-bar">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-10 col-lg-4">
-                        <h1 class="site-branding flex">
-                            <a href="/student-profile">Event Manager</a>
-                        </h1>
-                    </div>
+  <header class="site-header">
+    <div class="header-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-10 col-lg-4">
+            <h1 class="site-branding flex">
+              <a href="/student-profile">Event Manager</a>
+            </h1>
+          </div>
 
-                    <div class="col-2 col-lg-8">
-                        <nav class="all-header">
-                            <a class="boton" href="/student-index">HOME</a>
-                            <a class="boton" href="/student-profile">PROFILE</a>
-                            <a class="boton" href="/logout">LOGOUT</a>
-                        </nav>
-                    </div>
-                </div>
-            </div>
+          <div class="col-2 col-lg-8">
+            <nav class="all-header">
+              <a class="boton" href="/student-index">HOME</a>
+              <a class="boton" href="/student-profile">PROFILE</a>
+              <a class="boton" href="/logout">LOGOUT</a>
+            </nav>
+          </div>
         </div>
-    </header>    
+      </div>
+    </div>
+  </header>
 
-<div class="container emp-profile">
+  <div class="container emp-profile">
     <form action="/edit-student-profile" method="get">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="profile-img">
-                    <img src="images/student_photo/<%= foundStudent[0].photo %>" alt="logo"/>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="profile-head">
-                    <h2>
-                        <%= foundStudent[0].fname %> <%= foundStudent[0].mname %> <%= foundStudent[0].lname %>
-                    </h2>
-                    <h4>
-                        <%= foundStudent[0].regno %><br>
-                        <%= foundStudent[0].email %>
-                    </h4>
-                    <h4><%= foundStudent[0].phno %></h4>
-                    <h4><%= foundStudent[0].cname %></h4>  
-                </div>
-            </div>
-            <div class="col-md-2">
-                <input type="submit" class="profile-edit-btn" value="Edit Profile"/>
-            </div>
-            
-        </div> 
-    </form><br><br>
-    <div class="reghead">
-        <div class="row">    
-            <div class="col-md-9">
-                <h2 style="font-weight: 700;">Events Registered</h2>
-            </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="profile-img">
+            <img
+              src="images/student_photo/<%= foundStudent[0].photo %>"
+              alt="logo"
+            />
+          </div>
         </div>
+        <div class="col-md-6">
+          <div class="profile-head">
+            <h2>
+              <%= foundStudent[0].fname %> <%= foundStudent[0].mname %> <%=
+              foundStudent[0].lname %>
+            </h2>
+            <h4>
+              <%= foundStudent[0].regno %><br />
+              <%= foundStudent[0].email %>
+            </h4>
+            <h4><%= foundStudent[0].phno %></h4>
+            <h4><%= foundStudent[0].cname %></h4>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <input type="submit" class="profile-edit-btn" value="Edit Profile" />
+        </div>
+      </div>
+    </form>
+    <br /><br />
+    <div class="reghead">
+      <div class="row">
+        <div class="col-md-9">
+          <h2 style="font-weight: 700">Events Registered</h2>
+        </div>
+      </div>
     </div>
     <div class="row">
-        <% foundEvents.forEach(events => { %>
-            <div class="col-md-4">
-                <form action="/student-index" method="post">
-                    <div class="poster-img">
-                        <img src="images/uploaded_image/<%= events.poster %>" alt="logo"/>
-                    </div>
-                    <div class="poster-head">
-                        <button type="submit" class="glow-on-hover" id="clk" name="clicked" value="<%= events.ID %>" >
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="event-date"><%= events.month %><br>
-                                        <%= events.day %>
-                                    </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="event-date"><%= events.ename %></div>
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-                </form> 
-            </div>
-        <% }); %>
+      <% foundEvents.forEach(events => { %>
+      <div class="col-md-4">
+        <form action="/student-event-reg" method="post">
+          <div class="poster-img">
+            <img src="images/uploaded_image/<%= events.poster %>" alt="logo" />
+          </div>
+          <div class="poster-head">
+            <button
+              type="submit"
+              class="glow-on-hover"
+              id="clk"
+              name="clicked"
+              value="<%= events.ID %>"
+            >
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="event-date">
+                    <%= events.month %><br />
+                    <%= events.day %>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="event-date"><%= events.ename %></div>
+                </div>
+              </div>
+            </button>
+          </div>
+        </form>
+      </div>
+      <% }); %>
     </div>
-</div>
+  </div>
 
-<%- include("partials/footer2") %>
+  <%- include("partials/footer2") %>
+</body>

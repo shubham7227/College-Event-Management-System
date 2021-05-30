@@ -1,67 +1,65 @@
 <%- include("partials/header2", {title: "Club Profile"}) %>
 
 <body>
-    <header class="site-header">
-        <div class="header-bar">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-10 col-lg-4">
-                        <h1 class="site-branding flex">
-                            <a href="/club-profile">Event Manager</a>
-                        </h1>
-                    </div>
+  <header class="site-header">
+    <div class="header-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-10 col-lg-4">
+            <h1 class="site-branding flex">
+              <a href="/club-profile">Event Manager</a>
+            </h1>
+          </div>
 
-                    <div class="col-2 col-lg-8">
-                        <nav class="all-header">
-                            <a class="boton" href="/club-profile">PROFILE</a>
-                            <a class="boton" href="/logout">LOGOUT</a>
-                        </nav>
-                    </div>
-                </div>
-            </div>
+          <div class="col-2 col-lg-8">
+            <nav class="all-header">
+              <a class="boton" href="/club-profile">PROFILE</a>
+              <a class="boton" href="/logout">LOGOUT</a>
+            </nav>
+          </div>
         </div>
-    </header>    
+      </div>
+    </div>
+  </header>
 
-<div class="container emp-profile">
+  <div class="container emp-profile">
     <% foundClub.forEach(club => { %>
-            <form action="/edit-club-profile" method="get">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="profile-img">
-                            <img src="images/logos/<%= club.logo %>" alt="logo"/>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="profile-head">
-                                    <h2>
-                                        <%= club.cname %>
-                                    </h2>
-                                    <h4>
-                                        <%= club.email %>
-                                    </h4>
-                                    <h4><%= club.phno %></h4>
-                            
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="submit" class="profile-edit-btn" value="Edit Profile"/>
-                    </div>
-                    
-                    <div class="hero-content">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-12 ">
-                                    <div class="entry-footer">
-                                        <a href="/register-event" class="btn">Register an Event</a>
-                                        <a href="/registered-event" class="btn">View Registered Events</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form> 
-            <% }); %>          
+    <form action="/edit-club-profile" method="get">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="profile-img">
+            <img src="images/logos/<%= club.logo %>" alt="logo" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="profile-head">
+            <h2><%= club.cname %></h2>
+            <h4><%= club.email %></h4>
+            <h4><%= club.phno %></h4>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <input type="submit" class="profile-edit-btn" value="Edit Profile" />
         </div>
 
-        <%- include("partials/footer2") %>
+        <div class="hero-content">
+          <div class="container">
+            <div class="row">
+              <div class="col-12">
+                <div class="entry-footer">
+                  <a href="/register-event" class="btn">Register an Event</a>
+                  <a href="/registered-event" class="btn"
+                    >View Registered Events</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <% }); %>
+  </div>
+
+  <%- include("partials/footer2") %>
+</body>

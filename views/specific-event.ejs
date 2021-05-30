@@ -1,111 +1,159 @@
-<%- include("partials/header2", {title: "Registered Events"}) %>
-
-<% if(failure) { %>
-    <div class="alert alert-danger" role="alert">
-        <%= msg %>
-    </div>
+<%- include("partials/header2", {title: "Registered Events"}) %> <% if(failure)
+{ %>
+<div class="alert alert-danger" role="alert"><%= msg %></div>
 <% } %>
 
 <body>
-    <header class="site-header">
-        <div class="header-bar">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-10 col-lg-4">
-                        <h1 class="site-branding flex">
-                            <a href="/club-profile">Event Manager</a>
-                        </h1>
-                    </div>
+  <header class="site-header">
+    <div class="header-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-10 col-lg-4">
+            <h1 class="site-branding flex">
+              <a href="/club-profile">Event Manager</a>
+            </h1>
+          </div>
 
-                    <div class="col-2 col-lg-8">
-                        <nav class="all-header">
-                            <a class="boton" href="/club-profile">PROFILE</a>
-                            <a class="boton" href="/logout">LOGOUT</a>
-                        </nav>
-                    </div>
-                </div>
-            </div>
+          <div class="col-2 col-lg-8">
+            <nav class="all-header">
+              <a class="boton" href="/club-profile">PROFILE</a>
+              <a class="boton" href="/logout">LOGOUT</a>
+            </nav>
+          </div>
         </div>
-    </header>
+      </div>
+    </div>
+  </header>
 
-    
-<div class="event-reg-form">
+  <div class="event-reg-form">
     <div class="main-content">
-        <div class="container">
-            <div class="entry-header">
-                <div class="entry-title">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h2>Update event</h2>
-                            <h6 style="color: red;">* required</h6>
-                        </div>
-                        <div style="text-align: right;" class="col-md-6">
-                            <a href="/view-event-participant">
-                                <div class="btn btn-primary">PARTICIPANTS</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="entry-header">
+          <div class="entry-title">
+            <div class="row">
+              <div class="col-md-6">
+                <h2>Update event</h2>
+                <h6 style="color: red">* required</h6>
+              </div>
+              <div style="text-align: right" class="col-md-6">
+                <a href="/view-event-participant">
+                  <div class="btn btn-primary">PARTICIPANTS</div>
+                </a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
 
+    <div class="event-reg">
+      <% specEvent.forEach(events => { %>
 
-<div class="event-reg">
-    <% specEvent.forEach(events => { %>
-        
-        <form action="/specific-event" method="post" encType="multipart/form-data">
-            <div class="form-group">
-              <label for="text-box">Event Name <a style="color: red;">*</a></label>
-              <input type="text" value="<%= events.ename %>" name="ename" class="form-control" id="ename" autocomplete="off">
+      <form
+        action="/specific-event"
+        method="post"
+        encType="multipart/form-data"
+      >
+        <div class="form-group">
+          <label for="text-box">Event Name <a style="color: red">*</a></label>
+          <input
+            type="text"
+            value="<%= events.ename %>"
+            name="ename"
+            class="form-control"
+            id="ename"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-group">
+          <label for="text-box">Venue<a style="color: red">*</a></label>
+          <input
+            type="text"
+            value="<%= events.venue %>"
+            name="venue"
+            class="form-control"
+            id="venue"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-group">
+          <div class="branch">
+            <div class="branch1">
+              <label for="text-box">Date<a style="color: red">*</a></label>
+              <input
+                type="date"
+                value="<%= events.dat %>"
+                name="edate"
+                class="form-control"
+                id="edate"
+                autocomplete="off"
+              />
             </div>
-            <div class="form-group">
-                <label for="text-box">Venue<a style="color: red;">*</a></label>
-                <input type="text" value="<%= events.venue %>" name="venue" class="form-control" id="venue" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <div class="branch">
-                    <div class="branch1">
-                        <label for="text-box">Date<a style="color: red;">*</a></label>
-                        <input type="date" value="<%= events.dat %>" name="edate" class="form-control" id="edate" autocomplete="off">
-                    </div>
 
-                    <div class="branch1">
-                        <label for="text-box">Number of Participants</label>
-                        <input type="text" value="<%= events.max_no_of_participant %>" name="max_no_of_participant" class="form-control" id="text-box" autocomplete="off">
-                    </div>
-                </div>
+            <div class="branch1">
+              <label for="text-box">Number of Participants</label>
+              <input
+                type="text"
+                value="<%= events.max_no_of_participant %>"
+                name="max_no_of_participant"
+                class="form-control"
+                id="text-box"
+                autocomplete="off"
+              />
             </div>
-            <div class="form-group">
-                <label for="text-box">Event Poster<a style="color: red;">*</a></label>
-                <div class="poster-img">
-                    <img id="output" src="images/uploaded_image/<%= events.poster %>" alt="poster"/>
-                    <input type="file" name="poster" accept="image/*" onchange="loadFile(event)"/>
-                </div>
-            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="text-box">Event Poster<a style="color: red">*</a></label>
+          <div class="poster-img">
+            <img
+              id="output"
+              src="images/uploaded_image/<%= events.poster %>"
+              alt="poster"
+            />
+            <input
+              type="file"
+              name="poster"
+              accept="image/*"
+              onchange="loadFile(event)"
+            />
+          </div>
+        </div>
 
-            <div class="form-group">
-                <label for="big-text-box">Event Description<a style="color: red;">*</a></label>
-                <textarea class="form-control" name="remarks" id="remarks" rows="5" autocomplete="off"><%= events.remarks %></textarea>
-            </div>
-            <button type="submit" id="register" class="btn btn-primary">UPDATE
-            </button>
-            <a href="/registered-event">
-                <div class="btn btn-primary">CANCEL</div>
-            </a>
-        </form>
+        <div class="form-group">
+          <label for="big-text-box"
+            >Event Description<a style="color: red">*</a></label
+          >
+          <textarea
+            class="form-control"
+            name="remarks"
+            id="remarks"
+            rows="5"
+            autocomplete="off"
+          >
+<%= events.remarks %></textarea
+          >
+        </div>
+        <button type="submit" id="register" class="btn btn-primary">
+          UPDATE
+        </button>
+        <a href="/registered-event">
+          <div class="btn btn-primary">CANCEL</div>
+        </a>
+      </form>
     </div>
     <% }); %>
-</div>
+  </div>
 
-<script>
-    var loadFile = function(event) {
-      var output = document.getElementById('output');
+  <script>
+    var loadFile = function (event) {
+      var output = document.getElementById("output");
       output.src = URL.createObjectURL(event.target.files[0]);
-      output.onload = function() {
-        URL.revokeObjectURL(output.src)
-      }
+      output.onload = function () {
+        URL.revokeObjectURL(output.src);
+      };
     };
-</script>
+  </script>
 
-<%- include("partials/footer2") %>
+  <%- include("partials/footer2") %>
+</body>
