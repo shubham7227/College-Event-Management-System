@@ -20,9 +20,7 @@ CREATE TABLE student(
     phno            VARCHAR(10)         NOT NULL,
     syear           VARCHAR(2)          NOT NULL,
     sbranch         VARCHAR(3)          NOT NULL,
-    photo           VARCHAR(255)        NOT NULL,
-    cname           VARCHAR(40),
-    FOREIGN KEY (cname) REFERENCES club(cname)
+    photo           VARCHAR(255)        NOT NULL
 );
 
 CREATE TABLE events(
@@ -70,6 +68,13 @@ CREATE table year(
     FOREIGN KEY (ID) REFERENCES events(ID)
 );
 
+CREATE TABLE member_of(
+    regno   VARCHAR(9) NOT NULL,
+    cname   VARCHAR(9)  NOT NULL,
+    PRIMARY KEY (regno,cname),
+    FOREIGN KEY (cname) REFERENCES club(cname),
+    FOREIGN KEY (regno) REFERENCES student(regno)
+);
 DELIMITER //
 CREATE FUNCTION extractyear(reg_no VARCHAR(9))
 RETURNS VARCHAR(2)

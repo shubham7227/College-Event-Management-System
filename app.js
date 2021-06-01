@@ -471,6 +471,10 @@ app.get("/student-profile", async (req, res) => {
             var result1 = await query("SELECT ID FROM participates WHERE regno=?", [
                 result[0].regno,
             ]);
+            var result2 = await query("SELECT * FROM has_member WHERE regno=?", [
+                result[0].regno,
+            ]);
+            
             for (let event of result1) {
                 var result2 = await query(
                     "SELECT ID, ename, poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE ID=? ORDER BY edate",
@@ -488,6 +492,7 @@ app.get("/student-profile", async (req, res) => {
             res.render("student-profile", {
                 foundStudent: result,
                 foundEvents: allEvents,
+                foundClub: result2
             });
         } catch (error) {
             console.log(error);
@@ -1164,7 +1169,6 @@ app.post("/add-club-member",async(req,res)=>{
     domain = req.body.domain;
     try{
         await query("INSERT INTO has_member(regno,cname,designation,domain) VALUES(?)",[[regno,cname,designation,domain]]);
-        await query("UPDATE student SET cname=? WHERE regno=? ",[cname,regno]);
         res.redirect("club-members");
     }catch(err){
         if(err.code==='ER_DUP_ENTRY'){
@@ -1186,9 +1190,7 @@ app.post("/delete-member", async(req,res) =>{
         regnoGet=req.body.regno;
         clubGet=req.body.cname;
         try{
-            await query("UPDATE student SET cname=null WHERE regno=?",[regnoGet]);
             await query("DELETE FROM has_member WHERE regno=? AND cname=?",[regnoGet,clubGet]);
-            
             res.redirect("club-members");
         }catch(err){
             console.log(err);
