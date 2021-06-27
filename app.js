@@ -10,9 +10,6 @@ const { json } = require("express");
 const util = require("util");
 const e = require("express");
 const { fail } = require("assert");
-const opn = require("opn");
-
-opn("http://localhost:3000/", { app: "chrome" });
 
 app.use(fileUpload());
 app.set("view engine", "ejs");
