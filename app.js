@@ -469,12 +469,11 @@ app.get("/student-profile", async (req, res) => {
         try {
             var result = await query("SELECT * FROM student WHERE email=?", [email]);
             var result1 = await query("SELECT ID FROM participates WHERE regno=?", [
-                result[0].regno,
+                result[0].regno
             ]);
-            var result2 = await query("SELECT * FROM has_member WHERE regno=?", [
-                result[0].regno,
+            var result3 = await query("SELECT * FROM member_of WHERE regno=?", [
+                result[0].regno
             ]);
-            
             for (let event of result1) {
                 var result2 = await query(
                     "SELECT ID, ename, poster, DAY(edate) day, DATE_FORMAT(edate,'%b') month FROM events WHERE ID=? ORDER BY edate",
@@ -492,7 +491,7 @@ app.get("/student-profile", async (req, res) => {
             res.render("student-profile", {
                 foundStudent: result,
                 foundEvents: allEvents,
-                foundClub: result2
+                foundClub: result3
             });
         } catch (error) {
             console.log(error);
@@ -1169,6 +1168,7 @@ app.post("/add-club-member",async(req,res)=>{
     domain = req.body.domain;
     try{
         await query("INSERT INTO has_member(regno,cname,designation,domain) VALUES(?)",[[regno,cname,designation,domain]]);
+        await query("INSERT INTO member_of(regno,cname) VALUES(?)",[[regno,cname]]);
         res.redirect("club-members");
     }catch(err){
         if(err.code==='ER_DUP_ENTRY'){
@@ -1176,6 +1176,7 @@ app.post("/add-club-member",async(req,res)=>{
             msg='Already A member';
             res.redirect("add-club-member");
         }else{
+            console.log(err);
             failure=true;
             msg='Cannot Find Student With Provided Registration Number';
             res.redirect("add-club-member");
@@ -1191,6 +1192,7 @@ app.post("/delete-member", async(req,res) =>{
         clubGet=req.body.cname;
         try{
             await query("DELETE FROM has_member WHERE regno=? AND cname=?",[regnoGet,clubGet]);
+            await query("DELETE FROM member_of WHERE regno=? AND cname=?",[regnoGet,clubGet]);
             res.redirect("club-members");
         }catch(err){
             console.log(err);

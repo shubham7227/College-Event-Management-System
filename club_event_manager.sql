@@ -70,7 +70,7 @@ CREATE table year(
 
 CREATE TABLE member_of(
     regno   VARCHAR(9) NOT NULL,
-    cname   VARCHAR(9)  NOT NULL,
+    cname   VARCHAR(40)  NOT NULL,
     PRIMARY KEY (regno,cname),
     FOREIGN KEY (cname) REFERENCES club(cname),
     FOREIGN KEY (regno) REFERENCES student(regno)
