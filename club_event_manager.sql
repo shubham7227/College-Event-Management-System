@@ -132,7 +132,7 @@ END //
 DELIMITER ;
 
 DELIMITER //
-
+//
 CREATE TRIGGER cap_reg
     BEFORE INSERT
     ON student FOR EACH ROW
