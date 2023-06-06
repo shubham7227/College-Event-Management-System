@@ -1,6 +1,6 @@
-<%- include("partials/header2", {title: "Registered Events"}) %> 
-<% if(failure){ %>
-    <div class="alert alert-danger" role="alert"><%= msg %></div>
+<%- include("partials/header2", {title: "Registered Events"}) %> <% if(failure){
+%>
+<div class="alert alert-danger" role="alert"><%= msg %></div>
 <% } %>
 
 <body>
@@ -36,7 +36,9 @@
                 <h2>View Event</h2>
               </div>
               <div style="text-align: right" class="col-md-6">
-                <a href="/view-event-participant">
+                <a
+                  href="/view-event-participant?eventid=<%= specEvent[0].ID %>"
+                >
                   <div class="btn btn-primary">PARTICIPANTS</div>
                 </a>
               </div>
@@ -122,7 +124,8 @@
           autocomplete="off"
           disabled
         >
-        <%= events.remarks %></textarea>
+        <%= events.remarks %></textarea
+        >
       </div>
 
       <div class="row">
@@ -132,12 +135,13 @@
           </a>
         </div>
         <div class="col-md-3">
-          <a href="/delete-event">
+          <a href="/delete-event?eventid=<%= events.ID %>">
             <div class="btn btn-delete">DELETE EVENT</div>
           </a>
         </div>
-      
+      </div>
+      <% }); %>
     </div>
-    <% }); %>
+    <%- include("partials/footer2") %>
   </div>
-<%- include("partials/footer2") %>
+</body>

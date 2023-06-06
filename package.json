@@ -1,29 +1,31 @@
 {
-  "name": "uploadproj",
+  "name": "college-event-management-system",
   "version": "1.0.0",
   "description": "This is a project for DBMS done by Sulav Giri, Resham Sapkota and Bikram Nepal",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shubham7227/uploadproj.git"
+    "url": "git+https://github.com/shubham7227/College-Event-Management-System.git"
   },
   "author": "Sulav Giri, Resham Sapkota, Bikram Nepal",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/shubham7227/uploadproj/issues"
+    "url": "https://github.com/shubham7227/College-Event-Management-System/issues"
   },
-  "homepage": "https://github.com/shubham7227/uploadproj#readme",
+  "homepage": "https://github.com/shubham7227/College-Event-Management-System#readme",
   "dependencies": {
-    "async": "^3.2.0",
     "dotenv": "^10.0.0",
-    "ejs": "^3.1.6",
+    "ejs": "^3.1.9",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
-    "mysql": "^2.18.1",
-    "opn": "^6.0.0",
+    "express-session": "^1.17.3",
+    "mysql2": "^3.3.3",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
     "util": "^0.12.4"
   }
 }

@@ -32,17 +32,14 @@
     <div class="row">
       <% foundEvents.forEach(events => { %>
       <div class="col-md-4">
-        <form action="/past-events" method="post">
+        <div>
           <div class="poster-img">
             <img src="images/uploaded_image/<%= events.poster %>" alt="logo" />
           </div>
           <div class="poster-head">
-            <button
-              type="submit"
+            <a
               class="glow-on-hover"
-              id="clk"
-              name="clicked"
-              value="<%= events.ID %>"
+              href="specific-event-view?eventid=<%= events.ID %>"
             >
               <div class="row">
                 <div class="col-md-3">
@@ -55,9 +52,9 @@
                   <div class="event-date"><%= events.ename %></div>
                 </div>
               </div>
-            </button>
+            </a>
           </div>
-        </form>
+        </div>
       </div>
       <% }); %>
     </div>
