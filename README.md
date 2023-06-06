@@ -1,13 +1,12 @@
-This project is all about connecting student and clubs through a platform.
+# College Event Management System
 
+## This project is all about connecting student and clubs through a platform.
 
-# uploadproj
+### Technologies used
 
-# to RUN
-
-1. npm install dotenv
-2. npm install express
-3. npm install ejs
-4. npm install mysql
-5. npm install express-fileupload
-6. 
+> EJS
+> Node.js
+> Express
+> Passport.js
+> Bootstrap
+> HTML/CSS
