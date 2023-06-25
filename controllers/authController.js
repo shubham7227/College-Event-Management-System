@@ -42,7 +42,7 @@ const studentSignup = async (req, res) => {
                 password === ""
               ) {
                 msg = "Empty fields are not allowed";
-              } else if (!isValids(phno)) {
+              } else if (!phnoRegex.tests(phno)) {
                 msg = "Phone Number Invalid";
               } else {
                 msg = "Registration Number invalid";
@@ -85,8 +85,8 @@ const clubSignup = async (req, res) => {
             const phnoRegex = /^[0-9]{10}$/;
             if (
               email !== "" &&
-              cname != "" &&
-              password != "" &&
+              cname !== "" &&
+              password !== "" &&
               phnoRegex.test(phno)
             ) {
               connection.query(
@@ -109,7 +109,7 @@ const clubSignup = async (req, res) => {
                 password === ""
               ) {
                 msg = "Empty fields are not allowed";
-              } else if (!isValids(phno)) {
+              } else if (!phnoRegex.tests(phno)) {
                 msg = "Phone Number Invalid";
               }
               res.redirect("/club-signup");
